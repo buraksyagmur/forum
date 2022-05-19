@@ -81,12 +81,12 @@ func regNewUser(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	stmt, err := db.Prepare("INSERT INTO users (username, image, email, password, access, loggedIn, likedPosts,dislikedPosts,likedComments2,dislikedComments2, likedComments) VALUES (?,?,?,?,?,?,?,?,?,?,?);")
+	stmt, err := db.Prepare("INSERT INTO users (username, image, email, password, access, loggedIn, likedPosts,dislikedPosts,likedComments2,dislikedComments2, likedComments,notifyView,notifyMsg) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
-	stmt.Exec(uname, image, email, hash, 1, true, "", "", "", "", "")
+	stmt.Exec(uname, image, email, hash, 1, true, "", "", "", "", "", "", "")
 
 	// test
 	var u string

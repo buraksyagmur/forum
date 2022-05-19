@@ -49,4 +49,10 @@ type user struct {
 	DislikedComments2 string
 	LikedComments     []comment
 	Password          string
+	notif             notification
+}
+
+type notification struct {
+	view    string
+	message string
 }

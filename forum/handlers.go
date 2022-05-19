@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -25,8 +26,42 @@ var (
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		http.Error(w, "404 Status Not Found", 404)
+		http.Error(w, "404 Page Not Found", 404)
 		return
+	}
+	allForumUnames := allForumUnames()
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+	}
+
+	u, _ := url.Parse(r.URL.String())
+
+	query := u.Query()
+	
+	category := []string{"Blockchain", "AI", "Cybersecurity", "Mobile Development", "Videogames"}
+	query.Get("category-filter")
+	if len(query) != 0 {
+		var badrequest bool = false
+		for i := 0; i < len(category); i++ {
+			if query.Get("category-filter") == category[i] {
+				badrequest = true
+			}
+		}
+		for i := 0; i < len(allForumUnames); i++ {
+			if query.Get("author-filter") == allForumUnames[i] {
+				badrequest = true
+			}
+		}
+		if query.Get("liked-post") == "liked-post" {
+			badrequest = true
+		}
+		if !badrequest {
+			http.Error(w, "400 Bad Request", 400)
+			return
+		}
+	}
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		http.Error(w, "Bad request", http.StatusBadRequest)
 	}
 
 	changingPos = false
@@ -111,7 +146,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-		allForumUnames := allForumUnames()
+
 		data := mainPageData{
 			Posts:       pos,
 			Userinfo:    curUser,
@@ -143,6 +178,9 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("logged in", loggedIn(r))
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+	}
 	if loggedIn(r) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -166,6 +204,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+	}
 	if loggedIn(r) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -190,17 +231,18 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	//	if loggedIn(r) {
-	processLogout(w, r)
-	//	}
-	http.Redirect(w, r, "/", http.StatusSeeOther)
 	if r.Method != http.MethodGet {
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
+	//	if loggedIn(r) {
+	processLogout(w, r)
+	//	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func PostPageHandler(w http.ResponseWriter, r *http.Request) {
+	var strID string
 	changingCom = false
 	curUser := obtainCurUserFormCookie(r)
 	if curUser.Username != "" {
@@ -223,7 +265,7 @@ func PostPageHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Parsing Error", http.StatusInternalServerError)
 			return
 		}
-		strID := r.FormValue("postdetails")
+		strID = r.FormValue("postdetails")
 		PostIdFromHTML, err := strconv.Atoi(strID)
 		if err != nil {
 			os.Exit(0)
@@ -272,7 +314,14 @@ func PostPageHandler(w http.ResponseWriter, r *http.Request) {
 		defer stmt.Close()
 		stmt.Exec(Chosen[0].IPs, Chosen[0].PostID)
 		//********* IP ********
+		
 		urlPost = "postpage?postdetails=" + strID + "&postdetails=" + Chosen[0].Title
+		fmt.Println(r.URL.Path)
+		fmt.Println(urlPost)
+		if r.URL.Path+"?postdetails="+strID+"&postdetails="+Chosen[0].Title != "/"+urlPost {
+			http.Error(w, "404 Page Not Found", 404)
+			return
+		}
 		Alllikes, Alldislikes := CommentSumOfAllLikes(AllForumUsers())
 
 		Chosen[0].Comments = DistLikesToComments(Chosen[0].Comments, Alllikes, Alldislikes)
@@ -323,10 +372,11 @@ func PostPageHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else if r.Method == "POST" {
-
 		processPost(r, curUser)
 		processComment(r, curUser)
 		http.Redirect(w, r, urlPost, http.StatusSeeOther)
+	} else {
+		http.Error(w, "Bad request", http.StatusBadRequest)
 	}
 }
 

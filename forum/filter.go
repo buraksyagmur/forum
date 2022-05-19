@@ -29,7 +29,7 @@ func AllForumUsers() []user {
 	defer rows.Close()
 	for rows.Next() {
 		var usr user
-		rows.Scan(&(usr.Username), &(usr.Image), &(usr.Email), &(usr.Password), &(usr.Access), &(usr.LoggedIn), &(usr.LikedPost), &(usr.DislikedPost), &(usr.LikedComments2), &(usr.DislikedComments2), &(usr.LikedComments))
+		rows.Scan(&(usr.Username), &(usr.Image), &(usr.Email), &(usr.Password), &(usr.Access), &(usr.LoggedIn), &(usr.LikedPost), &(usr.DislikedPost), &(usr.LikedComments2), &(usr.DislikedComments2), &(usr.LikedComments),&(usr.notif.view), &(usr.notif.message))
 		AllUsers = append(AllUsers, usr)
 	}
 	return AllUsers

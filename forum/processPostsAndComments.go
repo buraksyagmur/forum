@@ -14,6 +14,7 @@ func processPost(r *http.Request, curUser user) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	idNumOfLikesStr := r.PostForm.Get("po-like")
 	idNumOfDislikesStr := r.PostForm.Get("po-dislike")
 	postTitle := r.PostForm.Get("postTitle")
@@ -27,7 +28,7 @@ func processPost(r *http.Request, curUser user) {
 			log.Fatal(err)
 		}
 		postIDwithSep := curUser.LikedPost + "-" + updatePostID
-		
+
 		stmt2, err := db.Prepare("UPDATE users SET likedPosts = ?	WHERE username = ?;")
 		if err != nil {
 			log.Fatal(err)
@@ -41,6 +42,24 @@ func processPost(r *http.Request, curUser user) {
 		}
 		defer stmt3.Close()
 		stmt3.Exec(curUser.DislikedPost, curUser.Username)
+		url, author := findAuthor(posID)
+		randomID:=  RandStringRunes(10)
+		msg := curUser.Username + "liked your post" + url + randomID +"#"
+		author.notif.message += msg 
+		author.notif.view += randomID+ "#"
+		stmt, err := db.Prepare("UPDATE users SET notifyMsg = ?	WHERE username = ?;")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer stmt.Close()
+		stmt.Exec(author.notif.message, author.Username)
+		stmt4, err := db.Prepare("UPDATE users SET notifyView = ?	WHERE username = ?;")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer stmt4.Close()
+		stmt4.Exec(author.notif.view, author.Username)
+
 	} else if idNumOfDislikesStr != "" {
 		fmt.Printf("current User username when disliking post: %s\n", curUser.Username)
 		idNumOfDislikesStrSlice := strings.Split(idNumOfDislikesStr, "-")
@@ -155,7 +174,7 @@ func processComment(r *http.Request, curUser user) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		comIDwithSep := curUser.LikedComments2 + "-" + comID	
+		comIDwithSep := curUser.LikedComments2 + "-" + comID
 		stmt2, err := db.Prepare("UPDATE users SET likedComments2 = ?	WHERE username = ?;")
 		if err != nil {
 			log.Fatal(err)
