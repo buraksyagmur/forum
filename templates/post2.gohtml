@@ -1,0 +1,81 @@
+
+{{template "header2"}}
+
+
+{{range .Posts}}
+<div class="forum-postPage">
+    <p class="titleofPost">{{.Title}}</p>
+    <p class="contentofPost">{{.Content}}</p>
+    <form action="/" method="GET">
+        <input type="submit" name="categoryOfPost" class="categoryclass" value={{.Category}}>
+        </form>
+
+  <img  src={{.Image}} alt="ProfilePicture">
+  <span >{{.Author}}</span>
+
+      <p class= "timeOfpost">{{.PostTimeStr}}</p>
+      <p class="views">views:{{.View}}</p>
+      {{if .LikedByCur}}
+    <form method="post">
+        <button type="submit" name="po-like" class="Liked" value="{{.PostID}}-{{.Likes}}"><i class="fa-solid fa-heart"></i></button>
+        <span>{{.Likes}}</span> 
+    </form>
+    {{- else}}
+    <form method="post">
+        <button type="submit" name="po-like" class="Like" value="{{.PostID}}-{{.Likes}}"><i class="fa-solid fa-heart"></i></button>
+        <span>{{.Likes}}</span> 
+    </form>
+{{- end}}
+{{if .DislikedByCur}}
+    <form method="post">
+        <button type="submit" name="po-dislike" class="Dliked" value="{{.PostID}}-{{.Dislikes}}"><i class="fa-solid fa-heart-crack"></i></button>
+        <span>{{.Dislikes}}</span>
+    </form>
+    {{- else}}
+    <form method="post">
+        <button type="submit" name="po-dislike" class="Dlike" value="{{.PostID}}-{{.Dislikes}}"><i class="fa-solid fa-heart-crack"></i></button>
+        <span>{{.Dislikes}}</span>
+    </form>
+     </div>
+     {{- end}}
+    {{range .Comments}}
+     <div class="forum-comment">
+    
+        <p style="white-space: pre-line">{{.Content}}</p>  
+  <span >{{.Author}}</span>
+
+          <p class= "timeOfpost">{{.CommentTimeStr}}</p>
+          {{if .LikedByCur}}
+        <form method="post">
+            <button type="submit" name="com-like" class="Liked" value="{{.PostID}}-{{.CommentID}}-{{.Likes}}"><i class="fa-solid fa-heart"></i></button>
+            <span>{{.Likes}}</span>
+        </form>
+        {{- else}}
+         <form method="post">
+            <button type="submit" name="com-like" class="Like" value="{{.PostID}}-{{.CommentID}}-{{.Likes}}"><i class="fa-solid fa-heart"></i></button>
+            <span>{{.Likes}}</span>
+        </form>
+        {{- end}}
+        {{if .DislikedByCur}}
+        <form method="post">
+            <button type="submit" name="com-dislike" class="Dliked" value="{{.PostID}}-{{.CommentID}}-{{.Dislikes}}"><i class="fa-solid fa-heart-crack"></i></button>
+            <span>{{.Dislikes}}</span>
+        </form>
+        {{- else}}
+          <form method="post">
+            <button type="submit" name="com-dislike" class="Dlike" value="{{.PostID}}-{{.CommentID}}-{{.Dislikes}}"><i class="fa-solid fa-heart-crack"></i></button>
+            <span>{{.Dislikes}}</span>
+        </form>
+        {{- end}}
+   </div>
+    {{end}}
+    <div class="commentInput">
+    <form method="post">
+        <label for="comment">comment: </label>
+        <textarea type="text" id="comment" name="comment" rows="1" cols="30"></textarea>
+        <button type="submit" name="post-id" value="{{.PostID}}">Comment</button>
+    </form>
+</div>
+{{end}}
+
+{{template "footer"}}
