@@ -37,7 +37,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	u, _ := url.Parse(r.URL.String())
 
 	query := u.Query()
-	
+
 	category := []string{"Blockchain", "AI", "Cybersecurity", "Mobile Development", "Videogames"}
 	query.Get("category-filter")
 	if len(query) != 0 {
@@ -314,7 +314,7 @@ func PostPageHandler(w http.ResponseWriter, r *http.Request) {
 		defer stmt.Close()
 		stmt.Exec(Chosen[0].IPs, Chosen[0].PostID)
 		//********* IP ********
-		
+
 		urlPost = "postpage?postdetails=" + strID + "&postdetails=" + Chosen[0].Title
 		fmt.Println(r.URL.Path)
 		fmt.Println(urlPost)
@@ -393,6 +393,35 @@ func CategoryPageHandler(w http.ResponseWriter, r *http.Request) {
 		var pos []post
 		category := r.FormValue("categoryAllPosts")
 		pos = filCatDisplayPostsAndComments(category)
+
+		allForumUnames := allForumUnames()
+		data := mainPageData{
+			Posts:       pos,
+			Userinfo:    curUser,
+			ForumUnames: allForumUnames,
+		}
+		// fmt.Println("---------", forumUser)
+		err = tpl.ExecuteTemplate(w, "categories.gohtml", data)
+		if err != nil {
+			http.Error(w, "Executing Error", http.StatusInternalServerError)
+			return
+		}
+	} else {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+	}
+}
+
+func NotiPageHandler(w http.ResponseWriter, r *http.Request) {
+	curUser := obtainCurUserFormCookie(r)
+	if r.Method == "GET" {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		tpl, err := template.ParseFiles("./templates/header.gohtml", "./templates/header2.gohtml", "./templates/footer.gohtml", "./templates/categories.gohtml")
+		if err != nil {
+			http.Error(w, "Parsing Error", http.StatusInternalServerError)
+			return
+		}
+
+		pos := displayPostsAndComments()
 
 		allForumUnames := allForumUnames()
 		data := mainPageData{
