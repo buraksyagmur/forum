@@ -421,7 +421,23 @@ func NotiPageHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		var Viewcodes []string
+		var SeenCodes []int
 		pos := displayPostsAndComments()
+		msg := curUser.notif.message
+		msgSlc := strings.Split(msg, "#")
+		for i := 2; i < len(msgSlc); i += 3 {
+			Viewcodes = append(Viewcodes, msgSlc[i])
+		}
+		curUsrCodes := curUser.notif.view
+		curUsrCodesSlc := strings.Split(curUsrCodes, "#")
+		for i := 0; i < len(Viewcodes); i++ {
+			for k := 0; k < len(curUsrCodesSlc); k++ {
+				if Viewcodes[i] == curUsrCodesSlc[k] {
+					SeenCodes = append(SeenCodes, i, i+1, i+2)
+				}
+			}
+		}
 
 		allForumUnames := allForumUnames()
 		data := mainPageData{
