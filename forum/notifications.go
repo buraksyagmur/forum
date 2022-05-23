@@ -31,8 +31,8 @@ func findAuthor(posID int) (string, user) {
 }
 
 func showNotifications(usr user) user {
-	msg := usr.notif.message
-	view := usr.notif.view
+	msg := usr.Notif.Message
+	view := usr.Notif.View
 	msg2 := strings.Split(msg, "#")
 	view2 := strings.Split(view, "#")
 	for i := 0; i < len(msg2); i++ {
@@ -42,7 +42,7 @@ func showNotifications(usr user) user {
 				msg2[i-1] = ""
 			}
 		}
-		usr.notif.message = strings.Join(msg2, "#")
+		usr.Notif.Message = strings.Join(msg2, "#")
 	}
 	return usr
 }
@@ -59,4 +59,46 @@ func RandStringRunes(n int) string {
 		b[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
 	return string(b)
+}
+
+func UpdateNotif(curUser user) (user, []string) {
+	var Viewcodes []string
+	var SeenCodes []int
+	var NewMsg []string
+	var NewCodes []string
+
+	msg := curUser.Notif.Message
+	msgSlc := strings.Split(msg, "#")
+	for i := 2; i < len(msgSlc); i += 3 {
+		Viewcodes = append(Viewcodes, msgSlc[i])
+	}
+	curUsrCodes := curUser.Notif.View
+	curUsrCodesSlc := strings.Split(curUsrCodes, "#")
+	for i := 0; i < len(Viewcodes); i++ {
+		for k := 0; k < len(curUsrCodesSlc); k++ {
+			if Viewcodes[i] == curUsrCodesSlc[k] {
+				SeenCodes = append(SeenCodes, 3*i, (3*i)+1, (3*i)+2)
+			}
+		}
+	}
+	NewMsg = remove(msgSlc, SeenCodes)
+	for i := 0; i < len(NewMsg); i += 3 {
+		curUser.Notif.MessageShow = append(curUser.Notif.MessageShow, NewMsg[i])
+	}
+	for i := 1; i < len(NewMsg); i += 3 {
+		curUser.Notif.MessageLink = append(curUser.Notif.MessageLink, NewMsg[i])
+	}
+	for i := 2; i < len(NewMsg); i += 3 {
+		NewCodes = append(NewCodes, NewMsg[i])
+	}
+	return curUser, NewCodes
+}
+
+func remove(slice []string, s []int) []string {
+	k := 0
+	for i := 0; i < len(s); i++ {
+		slice = append(slice[:s[i]-k], slice[s[i]-k+1:]...)
+		k++
+	}
+	return slice
 }

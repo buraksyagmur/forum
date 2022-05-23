@@ -36,6 +36,7 @@ type post struct {
 }
 
 type user struct {
+	Notif             notification
 	Username          string
 	Email             string
 	Access            int // 0 means no access, not logged in
@@ -49,10 +50,12 @@ type user struct {
 	DislikedComments2 string
 	LikedComments     []comment
 	Password          string
-	notif             notification
+	
 }
 
 type notification struct {
-	view    string
-	message string
+	View    string
+	Message string
+	MessageShow []string
+	MessageLink []string
 }

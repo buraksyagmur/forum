@@ -17,6 +17,11 @@ type mainPageData struct {
 	ForumUnames []string
 }
 
+type NotifPageData struct {
+	Userinfo user
+	Notif    notification
+}
+
 var (
 	urlPost     string
 	duplicateIP bool
@@ -413,41 +418,33 @@ func CategoryPageHandler(w http.ResponseWriter, r *http.Request) {
 
 func NotiPageHandler(w http.ResponseWriter, r *http.Request) {
 	curUser := obtainCurUserFormCookie(r)
+	var NewNotif []string
 	if r.Method == "GET" {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		tpl, err := template.ParseFiles("./templates/header.gohtml", "./templates/header2.gohtml", "./templates/footer.gohtml", "./templates/categories.gohtml")
+		tpl, err := template.ParseFiles("./templates/header2.gohtml", "./templates/footer.gohtml", "./templates/notif.gohtml")
 		if err != nil {
+			fmt.Println(err)
 			http.Error(w, "Parsing Error", http.StatusInternalServerError)
 			return
 		}
+		curUser, NewNotif = UpdateNotif(curUser)
 
-		var Viewcodes []string
-		var SeenCodes []int
-		pos := displayPostsAndComments()
-		msg := curUser.notif.message
-		msgSlc := strings.Split(msg, "#")
-		for i := 2; i < len(msgSlc); i += 3 {
-			Viewcodes = append(Viewcodes, msgSlc[i])
+		NewCodes := strings.Join(NewNotif, "#")
+		curUser.Notif.View += "#" + NewCodes
+		stmt, err := db.Prepare("UPDATE users SET notifyView = ?	WHERE username = ?;")
+		if err != nil {
+			log.Fatal(err)
 		}
-		curUsrCodes := curUser.notif.view
-		curUsrCodesSlc := strings.Split(curUsrCodes, "#")
-		for i := 0; i < len(Viewcodes); i++ {
-			for k := 0; k < len(curUsrCodesSlc); k++ {
-				if Viewcodes[i] == curUsrCodesSlc[k] {
-					SeenCodes = append(SeenCodes, i, i+1, i+2)
-				}
-			}
-		}
-
-		allForumUnames := allForumUnames()
-		data := mainPageData{
-			Posts:       pos,
-			Userinfo:    curUser,
-			ForumUnames: allForumUnames,
+		defer stmt.Close()
+		stmt.Exec(curUser.Notif.View, curUser.Username)
+		data := NotifPageData{
+			Userinfo: curUser,
+			Notif:    curUser.Notif,
 		}
 		// fmt.Println("---------", forumUser)
-		err = tpl.ExecuteTemplate(w, "categories.gohtml", data)
+		err = tpl.ExecuteTemplate(w, "notif.gohtml", data)
 		if err != nil {
+			fmt.Println(err)
 			http.Error(w, "Executing Error", http.StatusInternalServerError)
 			return
 		}

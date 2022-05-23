@@ -45,20 +45,20 @@ func processPost(r *http.Request, curUser user) {
 		url, author := findAuthor(posID)
 		randomID:=  RandStringRunes(10)
 		msg := curUser.Username + "liked your post" + url + randomID +"#"
-		author.notif.message += msg 
-		author.notif.view += randomID+ "#"
+		author.Notif.Message += msg 
+		author.Notif.View += randomID+ "#"
 		stmt, err := db.Prepare("UPDATE users SET notifyMsg = ?	WHERE username = ?;")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		stmt.Exec(author.notif.message, author.Username)
+		stmt.Exec(author.Notif.Message, author.Username)
 		stmt4, err := db.Prepare("UPDATE users SET notifyView = ?	WHERE username = ?;")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer stmt4.Close()
-		stmt4.Exec(author.notif.view, author.Username)
+		stmt4.Exec(author.Notif.View, author.Username)
 
 	} else if idNumOfDislikesStr != "" {
 		fmt.Printf("current User username when disliking post: %s\n", curUser.Username)

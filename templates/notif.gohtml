@@ -1,0 +1,15 @@
+
+{{template "header2"}}
+
+
+<h1>Welcome to Notifications!</h1>
+
+{{range .Notif.MessageShow}}
+
+
+<p>{{.}}</p>
+{{end}}
+{{range .Notif.MessageLink}}
+<p>{{.}}</p>
+{{end}}
+{{template "footer"}}
