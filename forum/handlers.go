@@ -17,10 +17,7 @@ type mainPageData struct {
 	ForumUnames []string
 }
 
-type NotifPageData struct {
-	Userinfo user
-	Notif    notification
-}
+
 
 var (
 	urlPost     string
@@ -418,7 +415,14 @@ func CategoryPageHandler(w http.ResponseWriter, r *http.Request) {
 
 func NotiPageHandler(w http.ResponseWriter, r *http.Request) {
 	curUser := obtainCurUserFormCookie(r)
-	var NewNotif []string
+	users := AllForumUsers()
+	for i := 0; i < len(users); i++ {
+		if users[i].Username == curUser.Username {
+			curUser.NotifMessage = users[i].NotifMessage
+			curUser.NotifView = users[i].NotifView
+		}
+	}
+	var NewCodes []string
 	if r.Method == "GET" {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		tpl, err := template.ParseFiles("./templates/header2.gohtml", "./templates/footer.gohtml", "./templates/notif.gohtml")
@@ -427,22 +431,20 @@ func NotiPageHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Parsing Error", http.StatusInternalServerError)
 			return
 		}
-		curUser, NewNotif = UpdateNotif(curUser)
-
-		NewCodes := strings.Join(NewNotif, "#")
-		curUser.Notif.View += "#" + NewCodes
+		fmt.Println("*******newNotif", NewCodes)
+		curUser, NewCodes = UpdateNotif(curUser)
+		fmt.Println("newNotif", NewCodes)
+		NewCodesStr := strings.Join(NewCodes, "#")
+		curUser.NotifView += "#" + NewCodesStr
 		stmt, err := db.Prepare("UPDATE users SET notifyView = ?	WHERE username = ?;")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		stmt.Exec(curUser.Notif.View, curUser.Username)
-		data := NotifPageData{
-			Userinfo: curUser,
-			Notif:    curUser.Notif,
-		}
+		stmt.Exec(curUser.NotifView, curUser.Username)
+	
 		// fmt.Println("---------", forumUser)
-		err = tpl.ExecuteTemplate(w, "notif.gohtml", data)
+		err = tpl.ExecuteTemplate(w, "notif.gohtml", curUser)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, "Executing Error", http.StatusInternalServerError)

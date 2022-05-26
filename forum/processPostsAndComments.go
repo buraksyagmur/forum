@@ -43,22 +43,24 @@ func processPost(r *http.Request, curUser user) {
 		defer stmt3.Close()
 		stmt3.Exec(curUser.DislikedPost, curUser.Username)
 		url, author := findAuthor(posID)
-		randomID:=  RandStringRunes(10)
-		msg := curUser.Username + "liked your post" + url + randomID +"#"
-		author.Notif.Message += msg 
-		author.Notif.View += randomID+ "#"
+		randomID := RandStringRunes(10)
+	
+		fmt.Println("AUTHORMESSAGE", author.NotifMessage)
+		fmt.Println("AUTHORMESSAGE", author.NotifMessage+curUser.Username+"liked your post"+url+randomID+"#")
+		author.NotifMessage = author.NotifMessage + curUser.Username + "liked your post" + url + randomID + "#"
+		// author.NotifView += randomID+ "#"
 		stmt, err := db.Prepare("UPDATE users SET notifyMsg = ?	WHERE username = ?;")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		stmt.Exec(author.Notif.Message, author.Username)
-		stmt4, err := db.Prepare("UPDATE users SET notifyView = ?	WHERE username = ?;")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer stmt4.Close()
-		stmt4.Exec(author.Notif.View, author.Username)
+		stmt.Exec(author.NotifMessage, author.Username)
+		// stmt4, err := db.Prepare("UPDATE users SET notifyView = ?	WHERE username = ?;")
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+		// defer stmt4.Close()
+		// stmt4.Exec(author.NotifView, author.Username)
 
 	} else if idNumOfDislikesStr != "" {
 		fmt.Printf("current User username when disliking post: %s\n", curUser.Username)

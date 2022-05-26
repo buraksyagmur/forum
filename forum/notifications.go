@@ -30,22 +30,22 @@ func findAuthor(posID int) (string, user) {
 	return msg, SelectedUser
 }
 
-func showNotifications(usr user) user {
-	msg := usr.Notif.Message
-	view := usr.Notif.View
-	msg2 := strings.Split(msg, "#")
-	view2 := strings.Split(view, "#")
-	for i := 0; i < len(msg2); i++ {
-		for k := 0; k < len(view2); k++ {
-			if msg2[i] == view2[k] {
-				msg2[i-2] = ""
-				msg2[i-1] = ""
-			}
-		}
-		usr.Notif.Message = strings.Join(msg2, "#")
-	}
-	return usr
-}
+// func showNotifications(usr user) user {
+// 	msg := usr.NotifMessage
+// 	view := usr.NotifView
+// 	msg2 := strings.Split(msg, "#")
+// 	view2 := strings.Split(view, "#")
+// 	for i := 0; i < len(msg2); i++ {
+// 		for k := 0; k < len(view2); k++ {
+// 			if msg2[i] == view2[k] {
+// 				msg2[i-2] = ""
+// 				msg2[i-1] = ""
+// 			}
+// 		}
+// 		usr.NotifMessage = strings.Join(msg2, "#")
+// 	}
+// 	return usr
+// }
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -67,12 +67,12 @@ func UpdateNotif(curUser user) (user, []string) {
 	var NewMsg []string
 	var NewCodes []string
 
-	msg := curUser.Notif.Message
+	msg := curUser.NotifMessage
 	msgSlc := strings.Split(msg, "#")
 	for i := 2; i < len(msgSlc); i += 3 {
 		Viewcodes = append(Viewcodes, msgSlc[i])
 	}
-	curUsrCodes := curUser.Notif.View
+	curUsrCodes := curUser.NotifView
 	curUsrCodesSlc := strings.Split(curUsrCodes, "#")
 	for i := 0; i < len(Viewcodes); i++ {
 		for k := 0; k < len(curUsrCodesSlc); k++ {
@@ -83,10 +83,10 @@ func UpdateNotif(curUser user) (user, []string) {
 	}
 	NewMsg = remove(msgSlc, SeenCodes)
 	for i := 0; i < len(NewMsg); i += 3 {
-		curUser.Notif.MessageShow = append(curUser.Notif.MessageShow, NewMsg[i])
+		curUser.NotifMessageShow = append(curUser.NotifMessageShow, NewMsg[i])
 	}
 	for i := 1; i < len(NewMsg); i += 3 {
-		curUser.Notif.MessageLink = append(curUser.Notif.MessageLink, NewMsg[i])
+		curUser.NotifMessageLink = append(curUser.NotifMessageLink, NewMsg[i])
 	}
 	for i := 2; i < len(NewMsg); i += 3 {
 		NewCodes = append(NewCodes, NewMsg[i])
