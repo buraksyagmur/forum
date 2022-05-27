@@ -65,7 +65,6 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	changingPos = false
-	fmt.Println("looking for main page method", r.Method)
 	curUser := obtainCurUserFormCookie(r)
 	if curUser.Username != "" {
 		users := AllForumUsers()
@@ -75,12 +74,11 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 				curUser.DislikedPost = users[i].DislikedPost
 				curUser.DislikedComments2 = users[i].DislikedComments2
 				curUser.LikedComments2 = users[i].LikedComments2
-				curUser.NotifyMsg = users[i].NotifyMsg
+				curUser.Notifymsg = users[i].Notifymsg
 
 			}
 		}
 		changingPos = true
-		fmt.Println("CURUSERNOTIFMESSAGE",curUser.Username, curUser.NotifyMsg)
 	}
 
 	// // test
@@ -110,8 +108,6 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		filAuthor := r.FormValue("author-filter")
 		filLiked := r.FormValue("liked-post")
 		filCatFromButton := r.FormValue("categoryOfPost")
-		fmt.Println("************************ ", filCatFromButton, "catname")
-		fmt.Println(filCatDisplayPostsAndComments(filCatFromButton))
 		var pos []post
 		if filCat != "" {
 			pos = filCatDisplayPostsAndComments(filCat)
@@ -276,7 +272,6 @@ func PostPageHandler(w http.ResponseWriter, r *http.Request) {
 		pos = displayPostsAndComments()
 
 		AllLikes, AllDislikes := SumOfAllLikes(AllForumUsers())
-		fmt.Println("ALLLIKES", AllLikes, "ALLDISLIKES", AllDislikes)
 		pos = DistLikesToPosts(pos, AllLikes, AllDislikes)
 		allForumUnames := allForumUnames()
 		var Chosen []post
@@ -413,37 +408,37 @@ func CategoryPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func NotiPageHandler(w http.ResponseWriter, r *http.Request) {
-	curUser := obtainCurUserFormCookie(r)
+	CurUser := obtainCurUserFormCookie(r)
 	users := AllForumUsers()
 	for i := 0; i < len(users); i++ {
-		if users[i].Username == curUser.Username {
-			curUser.NotifyMsg = users[i].NotifyMsg
-			curUser.NotifyView = users[i].NotifyView
+		if users[i].Username == CurUser.Username {
+			CurUser.Notifymsg = users[i].Notifymsg
+			CurUser.Notifyview = users[i].Notifyview
 		}
 	}
 	var NewCodes []string
 	if r.Method == "GET" {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
 		tpl, err := template.ParseFiles("./templates/header2.gohtml", "./templates/footer.gohtml", "./templates/notif.gohtml")
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, "Parsing Error", http.StatusInternalServerError)
 			return
 		}
-		fmt.Println("*******newNotif", NewCodes)
-		curUser, NewCodes = UpdateNotif(curUser)
-		fmt.Println("newNotif", NewCodes)
+		CurUser, NewCodes = UpdateNotif(CurUser)
+		fmt.Println("************NOTIFICATION", CurUser.NotifMessageShow)
 		NewCodesStr := strings.Join(NewCodes, "#")
-		curUser.NotifyView += "#" + NewCodesStr
-		stmt, err := db.Prepare("UPDATE users SET notifyView = ?	WHERE username = ?;")
+		CurUser.Notifyview += "#" + NewCodesStr
+		stmt, err := db.Prepare("UPDATE users SET Notifyview = ?	WHERE username = ?;")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		stmt.Exec(curUser.NotifyView, curUser.Username)
+		stmt.Exec(CurUser.Notifyview, CurUser.Username)
 
 		// fmt.Println("---------", forumUser)
-		err = tpl.ExecuteTemplate(w, "notif.gohtml", curUser)
+		err = tpl.ExecuteTemplate(w, "notif.gohtml", CurUser)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, "Executing Error", http.StatusInternalServerError)

@@ -2,6 +2,7 @@ package forum
 
 import (
 	"fmt"
+	"html/template"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -9,16 +10,12 @@ import (
 )
 
 func findAuthor(posID int) (string, user) {
-	fmt.Println("FINDAUTHORFIRSTLINE")
 	var SelectedUser user
 	var authorName string
 	var msg string
-
 	posIDstr := strconv.Itoa(posID)
 	po := displayPostsAndComments()
-	fmt.Println("FINDAUTHORbeforeLINE")
 	usr := AllForumUsers()
-	fmt.Println("FINDAUTHORafterLINE")
 	for i := 0; i < len(po); i++ {
 		if po[i].PostID == posID {
 			authorName = po[i].Author
@@ -70,13 +67,14 @@ func UpdateNotif(curUser user) (user, []string) {
 	var SeenCodes []int
 	var NewMsg []string
 	var NewCodes []string
-
-	msg := curUser.NotifyMsg
+	var NotifMessageShow []string
+	var NotifMessageLink []string
+	msg := curUser.Notifymsg
 	msgSlc := strings.Split(msg, "#")
 	for i := 2; i < len(msgSlc); i += 3 {
 		Viewcodes = append(Viewcodes, msgSlc[i])
 	}
-	curUsrCodes := curUser.NotifyView
+	curUsrCodes := curUser.Notifyview
 	curUsrCodesSlc := strings.Split(curUsrCodes, "#")
 	for i := 0; i < len(Viewcodes); i++ {
 		for k := 0; k < len(curUsrCodesSlc); k++ {
@@ -86,15 +84,21 @@ func UpdateNotif(curUser user) (user, []string) {
 		}
 	}
 	NewMsg = remove(msgSlc, SeenCodes)
+	NewMsg = NewMsg[:len(NewMsg)-1]
+	fmt.Println("NEWMESSAGE", NewMsg, len(NewMsg))
+	for i := 0; i < len(NewMsg); i++ {
+		fmt.Println(NewMsg[i], i)
+	}
 	for i := 0; i < len(NewMsg); i += 3 {
-		curUser.NotifMessageShow = append(curUser.NotifMessageShow, NewMsg[i])
+		NotifMessageShow = append(NotifMessageShow, NewMsg[i])
 	}
 	for i := 1; i < len(NewMsg); i += 3 {
-		curUser.NotifMessageLink = append(curUser.NotifMessageLink, NewMsg[i])
+		NotifMessageLink = append(NotifMessageLink, NewMsg[i])
 	}
 	for i := 2; i < len(NewMsg); i += 3 {
 		NewCodes = append(NewCodes, NewMsg[i])
 	}
+	curUser.NotifMessageShow = SafeUrl(NotifMessageShow, NotifMessageLink)
 	return curUser, NewCodes
 }
 
@@ -105,4 +109,19 @@ func remove(slice []string, s []int) []string {
 		k++
 	}
 	return slice
+}
+
+func SafeUrl(msg, link []string) map[string]template.URL {
+	fmt.Println("IMPORTANT", msg, len(msg), link, len(link))
+	ShowMap := make(map[string]template.URL, len(msg))
+	var Slc []template.URL
+	for i := 0; i < len(link); i++ {
+		Slc = append(Slc, template.URL(link[i]))
+	}
+
+	for i := 0; i < len(Slc); i++ {
+		ShowMap[msg[i]] = Slc[i]
+	}
+	fmt.Println("AGAINIMPORTTAM", ShowMap)
+	return ShowMap
 }

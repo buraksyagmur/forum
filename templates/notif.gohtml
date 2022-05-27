@@ -3,13 +3,7 @@
 
 
 <h1>Welcome to Notifications!</h1>
-
-{{range .Notif.MessageShow}}
-
-
-<p>{{.}}</p>
-{{end}}
-{{range .Notif.MessageLink}}
-<p>{{.}}</p>
-{{end}}
+{{ range $key, $value := .NotifMessageShow }}
+   <li><strong>{{ $key }}</strong>: <a href="{{ $value }}">Go To Post</a></li>
+{{ end }}
 {{template "footer"}}

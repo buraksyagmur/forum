@@ -1,6 +1,7 @@
 package forum
 
 import (
+	"html/template"
 	"time"
 )
 
@@ -49,8 +50,7 @@ type user struct {
 	DislikedComments2 string
 	LikedComments     []comment
 	Password          string
-	NotifyView        string
-	NotifyMsg         string
-	NotifMessageShow  []string
-	NotifMessageLink  []string
+	Notifyview        string
+	Notifymsg         string
+	NotifMessageShow  map[string]template.URL
 }
