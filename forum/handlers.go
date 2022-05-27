@@ -17,8 +17,6 @@ type mainPageData struct {
 	ForumUnames []string
 }
 
-
-
 var (
 	urlPost     string
 	duplicateIP bool
@@ -77,11 +75,12 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 				curUser.DislikedPost = users[i].DislikedPost
 				curUser.DislikedComments2 = users[i].DislikedComments2
 				curUser.LikedComments2 = users[i].LikedComments2
+				curUser.NotifyMsg = users[i].NotifyMsg
 
 			}
 		}
 		changingPos = true
-
+		fmt.Println("CURUSERNOTIFMESSAGE",curUser.Username, curUser.NotifyMsg)
 	}
 
 	// // test
@@ -418,8 +417,8 @@ func NotiPageHandler(w http.ResponseWriter, r *http.Request) {
 	users := AllForumUsers()
 	for i := 0; i < len(users); i++ {
 		if users[i].Username == curUser.Username {
-			curUser.NotifMessage = users[i].NotifMessage
-			curUser.NotifView = users[i].NotifView
+			curUser.NotifyMsg = users[i].NotifyMsg
+			curUser.NotifyView = users[i].NotifyView
 		}
 	}
 	var NewCodes []string
@@ -435,14 +434,14 @@ func NotiPageHandler(w http.ResponseWriter, r *http.Request) {
 		curUser, NewCodes = UpdateNotif(curUser)
 		fmt.Println("newNotif", NewCodes)
 		NewCodesStr := strings.Join(NewCodes, "#")
-		curUser.NotifView += "#" + NewCodesStr
+		curUser.NotifyView += "#" + NewCodesStr
 		stmt, err := db.Prepare("UPDATE users SET notifyView = ?	WHERE username = ?;")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		stmt.Exec(curUser.NotifView, curUser.Username)
-	
+		stmt.Exec(curUser.NotifyView, curUser.Username)
+
 		// fmt.Println("---------", forumUser)
 		err = tpl.ExecuteTemplate(w, "notif.gohtml", curUser)
 		if err != nil {

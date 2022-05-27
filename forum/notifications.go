@@ -1,6 +1,7 @@
 package forum
 
 import (
+	"fmt"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -8,13 +9,16 @@ import (
 )
 
 func findAuthor(posID int) (string, user) {
+	fmt.Println("FINDAUTHORFIRSTLINE")
 	var SelectedUser user
 	var authorName string
 	var msg string
 
 	posIDstr := strconv.Itoa(posID)
 	po := displayPostsAndComments()
+	fmt.Println("FINDAUTHORbeforeLINE")
 	usr := AllForumUsers()
+	fmt.Println("FINDAUTHORafterLINE")
 	for i := 0; i < len(po); i++ {
 		if po[i].PostID == posID {
 			authorName = po[i].Author
@@ -67,12 +71,12 @@ func UpdateNotif(curUser user) (user, []string) {
 	var NewMsg []string
 	var NewCodes []string
 
-	msg := curUser.NotifMessage
+	msg := curUser.NotifyMsg
 	msgSlc := strings.Split(msg, "#")
 	for i := 2; i < len(msgSlc); i += 3 {
 		Viewcodes = append(Viewcodes, msgSlc[i])
 	}
-	curUsrCodes := curUser.NotifView
+	curUsrCodes := curUser.NotifyView
 	curUsrCodesSlc := strings.Split(curUsrCodes, "#")
 	for i := 0; i < len(Viewcodes); i++ {
 		for k := 0; k < len(curUsrCodesSlc); k++ {

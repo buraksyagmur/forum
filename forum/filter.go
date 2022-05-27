@@ -1,7 +1,9 @@
 package forum
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"strings"
 )
 
@@ -21,16 +23,24 @@ func allForumUnames() []string {
 }
 
 func AllForumUsers() []user {
+	fmt.Println("ALLFORUMFIRSTLINE")
 	var AllUsers []user
 	rows, err := db.Query("SELECT * FROM users GROUP BY username;")
 	if err != nil {
+		fmt.Println("error")
 		log.Fatal(err)
+		os.Exit(0)
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var usr user
-		rows.Scan(&(usr.Username), &(usr.Image), &(usr.Email), &(usr.Password), &(usr.Access), &(usr.LoggedIn), &(usr.LikedPost), &(usr.DislikedPost), &(usr.LikedComments2), &(usr.DislikedComments2), &(usr.LikedComments),&(usr.NotifView), &(usr.NotifMessage))
+		rows.Scan(&(usr.Username), &(usr.Image), &(usr.Email), &(usr.Password), &(usr.Access), &(usr.LoggedIn), &(usr.LikedPost), &(usr.DislikedPost), &(usr.LikedComments2), &(usr.DislikedComments2), &(usr.LikedComments), &(usr.NotifyView), &(usr.NotifyMsg))
 		AllUsers = append(AllUsers, usr)
+
+	}
+	fmt.Println("userLoopStarting")
+	for i := 0; i < len(AllUsers); i++ {
+		fmt.Println("Users", AllUsers[i].NotifyMsg, i)
 	}
 	return AllUsers
 }

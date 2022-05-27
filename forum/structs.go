@@ -49,8 +49,8 @@ type user struct {
 	DislikedComments2 string
 	LikedComments     []comment
 	Password          string
-	NotifView         string
-	NotifMessage      string
+	NotifyView        string
+	NotifyMsg         string
 	NotifMessageShow  []string
 	NotifMessageLink  []string
 }
