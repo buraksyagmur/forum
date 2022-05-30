@@ -475,3 +475,32 @@ func NotiPageHandler(w http.ResponseWriter, r *http.Request) {
 // 	}
 // 	tpl.ExecuteTemplate(w, "notFound.gohtml", nil)
 // }
+func ActivityPageHandler(w http.ResponseWriter, r *http.Request) {
+	CurUser := obtainCurUserFormCookie(r)
+	users := AllForumUsers()
+	for i := 0; i < len(users); i++ {
+		if users[i].Username == CurUser.Username {
+			CurUser= users[i]	
+		}
+	}
+	if r.Method == "GET" {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+		tpl, err := template.ParseFiles("./templates/header2.gohtml", "./templates/footer.gohtml", "./templates/activity.gohtml")
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, "Parsing Error", http.StatusInternalServerError)
+			return
+		}
+
+		// fmt.Println("---------", forumUser)
+		err = tpl.ExecuteTemplate(w, "activity.gohtml", CurUser)
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, "Executing Error", http.StatusInternalServerError)
+			return
+		}
+	} else {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+	}
+}

@@ -54,3 +54,15 @@ type user struct {
 	Notifymsg         string
 	NotifMessageShow  map[string]template.URL
 }
+
+type Activity struct {
+	Likes     string
+	Dislikes  string
+	PostID    string
+	CommentID string
+	LikesCom  string
+	DlikesCom string
+	Notifymsg string
+	Post      []post
+	Com       []comment
+}
