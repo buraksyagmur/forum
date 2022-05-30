@@ -1,61 +1,73 @@
 * {
   font-family: Arial, Helvetica, sans-serif;
- }
+}
 
 html {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
+
 body {
-    margin: 0;
-    background-color: #FFFEFE;
+  margin: 0;
+  background-color: #FFFEFE;
 }
-img{
-  width:25px;
-  height:auto ;
+
+img {
+  width: 25px;
+  height: auto;
 }
 
 .forum-form input:hover {
-    background-color: rgb(181, 238, 238);
+  background-color: rgb(181, 238, 238);
 }
+
 .forum-form textarea:hover {
-    background-color: rgb(181, 238, 238);
+  background-color: rgb(181, 238, 238);
 }
+
 h1 {
-    color : #8453CE;
-    
+  color: #8453CE;
+
 }
-.forum-post:nth-child(odd){
+
+.forum-post:nth-child(odd) {
   background-color: rgba(249, 234, 242, 0.9);
 }
-.forum-post:nth-child(even){
+
+.forum-post:nth-child(even) {
   background-color: rgba(249, 234, 242, 0.3);
 }
-.forum-comment:nth-child(even){
+
+.forum-comment:nth-child(even) {
   background-color: rgba(249, 234, 242, 0.3);
   font-size: small;
   overflow: auto;
 }
-.forum-comment:nth-child(odd){
+
+.forum-comment:nth-child(odd) {
   background-color: rgba(249, 234, 242, 0.9);
   font-size: small;
   overflow: auto;
 }
+
 /* .forum-comment{
   
   background-color:grey; 
 }*/
-.forum-postPage{
-  background-color:#FFFEFE;
-  font-size:large
+.forum-postPage {
+  background-color: #FFFEFE;
+  font-size: large
 }
-.commentInput{
+
+.commentInput {
   background-color: #8453CE;
 }
-ul.titleclass{
+
+ul.titleclass {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
+
 .postbutton {
   text-align: center;
   border: none;
@@ -64,223 +76,267 @@ ul.titleclass{
   margin: 0;
   background: none;
   font-size: 30px;
-  color:#8453CE;
+  color: #8453CE;
 }
-.Like{ 
+
+.Like {
   background-color: none;
   font-size: 25px;
-  color:none;
-  margin-left: 25px ;
+  color: none;
+  margin-left: 25px;
 }
-.Liked{ 
+
+.Liked {
   background-color: none;
   font-size: 25px;
-  color:red;
-  margin-left: 25px ;
+  color: red;
+  margin-left: 25px;
 }
-.Dlike{ 
+
+.Dlike {
   background-color: none;
   font-size: 25px;
-  color:none;
-  margin-left: 25px ;
+  color: none;
+  margin-left: 25px;
 }
-.Dliked{ 
+
+.Dliked {
   background-color: none;
   font-size: 25px;
-  color:red;
-  margin-left: 25px ;
+  color: red;
+  margin-left: 25px;
 }
 
 
 .postbutton:hover {
   cursor: pointer;
 }
+
 .navbar {
-    overflow: hidden;
-    background-color: #56C271;
-    font-family: Arial;
-  }
-  
-  /* Links inside the navbar */
-  .navbar a {
-    float: left;
-    font-size: 16px;
-    color: #FFFEFE;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-  }
-  .navbar button {
-    float: left;
-    font-size: 16px;
-    color: #FFFEFE;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-  }
-  
-  /* The dropdown container */
-  .dropdown {
-    float: left;
-    overflow: hidden;
-  }
-  
-  /* Dropdown button */
-  .dropdown .dropbtn {
-    font-size: 16px;
-    border: none;
-    outline: none;
-    color: #FFFEFE;
-    padding: 14px 16px;
-    background-color: inherit;
-    font-family: inherit; 
-    margin: 0; 
-  }
-  
+  overflow: hidden;
+  background-color: #56C271;
+  font-family: Arial;
+}
 
-  .navbar a:hover, .dropdown:hover .dropbtn {
-    background-color: #8453CE;
-  }
-  
+/* Links inside the navbar */
+.navbar a {
+  float: left;
+  font-size: 16px;
+  color: #FFFEFE;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
 
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #FFFEFE;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-  }
-  
+.navbar button {
 
-  .dropdown-content a {
-    float: none;
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
-  }
-  
+  font-size: 16px;
+  color: #FFFEFE;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
 
-  .dropdown-content a:hover {
-    background-color: #ddd;
-  }
-  .dropdown-content button {
-    float: none;
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
-    border: none;
-  }
-  
+/* The dropdown container */
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
 
-  .dropdown-content button:hover {
-    background-color: #ddd;
-  }
-
-  .dropdown:hover .dropdown-content {
-    display: block;
-  }
-  .usernamePost{ 
-    margin-left: 150px;
-
-  }
-  .timeOfpost{
-    font-size: 10px;
-  }
-
-  .categoryclass{
-    padding: 6px 12px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 10px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
-    cursor: pointer;
-    background-color: white; 
-    color: black; 
-    border: 2px solid #4CAF50;
-  }
-  .categoryclass:hover{
-    background-color: #4CAF50;
-    color: white;
+/* Dropdown button */
+.dropdown .dropbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: #FFFEFE;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
 
 
-  }
-  .titleofPost{
-    font: small-caps 50px Arial, sans-serif;
+.navbar a:hover, .dropdown:hover .dropbtn {
+  background-color: #8453CE;
+}
 
-  }
-  .contentofPost{
-    font: 20px Arial, sans-serif;
-    white-space: pre-line;
-  }
-  #myBtn {
-    
-    position: fixed; 
-    bottom: 20px; 
-    right: 30px; 
-    border-radius: 4px;
-    background-color:#8453CE;
-    border: none;
-    color: #FFFFFF;
-    text-align: center;
-    font-size: 12px;
-    padding: 14px;
-    width: 150px;
-    transition: all 0.5s;
-    cursor: pointer;
-    margin: 5px;
-  
-  }
-  #myBtn span {
-    cursor: pointer;
-    display: inline-block;
-    position: relative;
-    transition: 0.5s;
-  }
-  
-  #myBtn span:after {
-    content: '\00bb';
-    position: absolute;
-    opacity: 0;
-    top: 0;
-    right: -2px;
-    transition: 0.5s;
-    transform:rotate(-90deg);
-  }
-  #myBtn:hover span {
-    padding-right: 25px;
-  }
-  
-  #myBtn:hover span:after {
-    opacity: 1;
-    right: 0;
-  }
-  
-  #likebutton{ 
-    border-radius: 4px;
-    background-color: none;
-    border: none;
-    text-align: center;
-    font-size: 20px;
-    font-weight: bolder;  
-    cursor: pointer;
-    
-  }
-  #Dlikebutton{
-    border-radius: 4px;
-    background-color: none;
-    border: none; 
-    text-align: center;
-    font-size: 20px;
-    font-weight: bolder;   
-    cursor: pointer;
-  }
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #FFFEFE;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+
+.dropdown-content a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.dropdown-content button {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+  border: none;
+}
+
+
+.dropdown-content button:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.Notification {
+  background-color: #56C271;
+  border: none;
+
+}
+
+.NotificationA {
+  background-color: red;
+  border: none;
+  color:red;
+
+
+}
+
+
+.NotificationA .badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 5px 10px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+}
+
+
+
+.usernamePost {
+  margin-left: 150px;
+
+}
+
+.timeOfpost {
+  font-size: 10px;
+}
+
+.categoryclass {
+  padding: 6px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  border: 2px solid #4CAF50;
+}
+
+.categoryclass:hover {
+  background-color: #4CAF50;
+  color: white;
+
+
+}
+
+.titleofPost {
+  font: small-caps 50px Arial, sans-serif;
+
+}
+
+.contentofPost {
+  font: 20px Arial, sans-serif;
+  white-space: pre-line;
+}
+
+#myBtn {
+
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  border-radius: 4px;
+  background-color: #8453CE;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 12px;
+  padding: 14px;
+  width: 150px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+
+}
+
+#myBtn span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+#myBtn span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -2px;
+  transition: 0.5s;
+  transform: rotate(-90deg);
+}
+
+#myBtn:hover span {
+  padding-right: 25px;
+}
+
+#myBtn:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+#likebutton {
+  border-radius: 4px;
+  background-color: none;
+  border: none;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bolder;
+  cursor: pointer;
+
+}
+
+#Dlikebutton {
+  border-radius: 4px;
+  background-color: none;
+  border: none;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bolder;
+  cursor: pointer;
+}
+
 .forum-post p {
   font-size: 15px;
   font-weight: lighter;

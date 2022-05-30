@@ -44,7 +44,7 @@ func processPost(r *http.Request, curUser user) {
 		stmt3.Exec(curUser.DislikedPost, curUser.Username)
 		url, author := findAuthor(posID)
 		randomID := RandStringRunes(10)
-		author.Notifymsg = author.Notifymsg + curUser.Username + "liked your post" + url + randomID + "#"
+		author.Notifymsg = author.Notifymsg + curUser.Username + " liked your post" + url + randomID + "#"
 		// author.NotifView += randomID+ "#"
 		stmt, err := db.Prepare("UPDATE users SET Notifymsg = ?	WHERE username = ?;")
 		if err != nil {
@@ -81,6 +81,16 @@ func processPost(r *http.Request, curUser user) {
 		}
 		defer stmt3.Close()
 		stmt3.Exec(curUser.LikedPost, curUser.Username)
+		url, author := findAuthor(posID)
+		randomID := RandStringRunes(10)
+		author.Notifymsg = author.Notifymsg + curUser.Username + " disliked your post" + url + randomID + "#"
+		// author.NotifView += randomID+ "#"
+		stmt, err := db.Prepare("UPDATE users SET Notifymsg = ?	WHERE username = ?;")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer stmt.Close()
+		stmt.Exec(author.Notifymsg, author.Username)
 	} else if postTitle != "" {
 		fmt.Printf("curUser username when inserting new post: %s\n", curUser.Username)
 		postCon := r.PostForm.Get("postContent")
@@ -187,6 +197,16 @@ func processComment(r *http.Request, curUser user) {
 		}
 		defer stmt3.Close()
 		stmt3.Exec(curUser.DislikedComments2, curUser.Username)
+		url, author := findCommentAuthor(comIDint)
+		randomID := RandStringRunes(10)
+		author.Notifymsg = author.Notifymsg + curUser.Username + " liked your comment" + url + randomID + "#"
+		// author.NotifView += randomID+ "#"
+		stmt, err := db.Prepare("UPDATE users SET Notifymsg = ?	WHERE username = ?;")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer stmt.Close()
+		stmt.Exec(author.Notifymsg, author.Username)
 
 	} else if idNumOfDislikesStr != "" {
 		fmt.Printf("curUser username when disliking comment: %s\n", curUser.Username)
@@ -210,9 +230,23 @@ func processComment(r *http.Request, curUser user) {
 		}
 		defer stmt3.Close()
 		stmt3.Exec(curUser.LikedComments2, curUser.Username)
+		url, author := findCommentAuthor(comIDint)
+		randomID := RandStringRunes(10)
+		author.Notifymsg = author.Notifymsg + curUser.Username + " disliked your comment" + url + randomID + "#"
+		// author.NotifView += randomID+ "#"
+		stmt, err := db.Prepare("UPDATE users SET Notifymsg = ?	WHERE username = ?;")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer stmt.Close()
+		stmt.Exec(author.Notifymsg, author.Username)
 	} else if comCon != "" {
 		fmt.Printf("curUser username when inserting new comment: %s\n", curUser.Username)
 		poId := r.PostForm.Get("post-id")
+		posID, err := strconv.Atoi(poId)
+		if err != nil {
+			log.Fatal(err)
+		}
 		fmt.Printf("comment: %s under %s\n", comCon, poId)
 		stmt, err := db.Prepare("INSERT INTO comments (author, postID, content, commentTime, likes, dislikes) VALUES (?,?,?,?,?,?);")
 		if err != nil {
@@ -220,6 +254,16 @@ func processComment(r *http.Request, curUser user) {
 		}
 		defer stmt.Close()
 		stmt.Exec(curUser.Username, poId, comCon, time.Now(), 0, 0)
+		url, author := findAuthor(posID)
+		randomID := RandStringRunes(10)
+		author.Notifymsg = author.Notifymsg + curUser.Username + " commented your post" + url + randomID + "#"
+		// author.NotifView += randomID+ "#"
+		stmt2, err := db.Prepare("UPDATE users SET Notifymsg = ?	WHERE username = ?;")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer stmt2.Close()
+		stmt2.Exec(author.Notifymsg, author.Username)
 	}
 	return
 }

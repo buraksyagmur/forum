@@ -31,6 +31,36 @@ func findAuthor(posID int) (string, user) {
 	return msg, SelectedUser
 }
 
+func findCommentAuthor(comID int) (string, user) {
+	var SelectedUser user
+	var authorName string
+	var msg string
+	var posID int
+	po := displayPostsAndComments()
+	for i := 0; i < len(po); i++ {
+		for k := 0; k < len(po[i].Comments); k++ {
+			if po[i].Comments[k].CommentID == comID {
+				posID = po[i].PostID
+				authorName = po[i].Comments[k].Author
+			}
+		}
+	}
+	posIDstr := strconv.Itoa(posID)
+	usr := AllForumUsers()
+	for i := 0; i < len(po); i++ {
+		if po[i].PostID == posID {
+			msg = "#" + "localhost:8080/postpage?postdetails=" + posIDstr + "&postdetails=" + po[i].Title + "#"
+		}
+	}
+	for i := 0; i < len(usr); i++ {
+		if usr[i].Username == authorName {
+			SelectedUser = usr[i]
+		}
+	}
+
+	return msg, SelectedUser
+}
+
 // func showNotifications(usr user) user {
 // 	msg := usr.NotifMessage
 // 	view := usr.NotifView
@@ -98,6 +128,7 @@ func UpdateNotif(curUser user) (user, []string) {
 	for i := 2; i < len(NewMsg); i += 3 {
 		NewCodes = append(NewCodes, NewMsg[i])
 	}
+	fmt.Println("NOTIFMESSAGE", NotifMessageShow, NotifMessageLink)
 	curUser.NotifMessageShow = SafeUrl(NotifMessageShow, NotifMessageLink)
 	return curUser, NewCodes
 }
@@ -113,14 +144,16 @@ func remove(slice []string, s []int) []string {
 
 func SafeUrl(msg, link []string) map[string]template.URL {
 	fmt.Println("IMPORTANT", msg, len(msg), link, len(link))
-	ShowMap := make(map[string]template.URL, len(msg))
+	ShowMap := make(map[string]template.URL, len(msg)*2)
 	var Slc []template.URL
 	for i := 0; i < len(link); i++ {
 		Slc = append(Slc, template.URL(link[i]))
 	}
+	fmt.Println("SLC", Slc, len(Slc))
+	for k := 0; k < len(Slc); k++ {
+		intK := strconv.Itoa(k + 1)
+		ShowMap[intK+"-"+msg[k]] = Slc[k]
 
-	for i := 0; i < len(Slc); i++ {
-		ShowMap[msg[i]] = Slc[i]
 	}
 	fmt.Println("AGAINIMPORTTAM", ShowMap)
 	return ShowMap

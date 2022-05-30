@@ -75,7 +75,11 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 				curUser.DislikedComments2 = users[i].DislikedComments2
 				curUser.LikedComments2 = users[i].LikedComments2
 				curUser.Notifymsg = users[i].Notifymsg
-
+				curUser.Notifyview= users[i].Notifyview
+				var something []string
+				curUser, something = UpdateNotif(curUser)
+				fmt.Println(something)
+				fmt.Println("NOOOOOOTIFMESAAGE", curUser.NotifMessageShow)
 			}
 		}
 		changingPos = true
@@ -125,6 +129,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		for i := 0; i < len(pos); i++ {
 		}
 		if changingPos {
+
 			userLikes := CountLikesByUser(curUser, "l")
 			userDislikes := CountLikesByUser(curUser, "d")
 
