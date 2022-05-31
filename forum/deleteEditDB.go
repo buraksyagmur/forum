@@ -69,3 +69,39 @@ func ClearUsers() {
 	defer stmt.Close()
 	stmt.Exec()
 }
+
+func DeleteOnePost(postID int) {
+	stmt, err := db.Prepare("DELETE FROM posts WHERE postID=?;")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	stmt.Exec(postID)
+}
+
+func DeleteOneCom(comID int) {
+	stmt, err := db.Prepare("DELETE FROM posts WHERE commentID=?;")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	stmt.Exec(comID)
+}
+
+func EditPost(newpos post) {
+	stmt, err := db.Prepare("UPDATE posts SET title = ?, content= ?, category=?,postTime =?, URL=? WHERE postID = ?;")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	stmt.Exec(newpos.Title, newpos.Content, newpos.Category, newpos.PostTime, newpos.URL, newpos.PostID)
+}
+
+func EditCom(newCom comment) {
+	stmt, err := db.Prepare("UPDATE posts SET content= ?,postTime =?, URL=? WHERE commentID = ?;")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	stmt.Exec(newCom.Content, newCom.CommentTime, newCom.URL, newCom.URL)
+}

@@ -116,3 +116,14 @@ func filLikedDisplayPostsAndComments(curUser user) []post {
 	}
 	return pos
 }
+
+func FindPostByPostId(postId int) post {
+	var pos post
+	po := displayPostsAndComments()
+	for i := 0; i < len(po); i++ {
+		if po[i].PostID == postId {
+			pos = po[i]
+		}
+	}
+	return pos
+}

@@ -134,12 +134,14 @@ func processPost(r *http.Request, curUser user) {
 		for i := 0; i < len(postCat); i++ {
 			postCatStr += "(" + postCat[i] + ")"
 		}
-		stmt, err := db.Prepare("INSERT INTO posts (author, image, title, content, category, postTime, likes, dislikes, ips) VALUES(?,?,?,?,?,?,?,?,?);")
+		postID := strconv.Itoa(len(displayPostsAndComments()) + 1)
+		url := "postpage?postdetails=" + postID + "&postdetails=" + postTitle
+		stmt, err := db.Prepare("INSERT INTO posts (author, image, title, content, category, postTime, likes, dislikes, ips,URL) VALUES(?,?,?,?,?,?,?,?,?,?);")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		stmt.Exec(curUser.Username, curUser.Image, postTitle, postCon, postCatStr, time.Now(), 0, 0, ip)
+		stmt.Exec(curUser.Username, curUser.Image, postTitle, postCon, postCatStr, time.Now(), 0, 0, ip, url)
 
 		// test
 		// var pid int
@@ -179,6 +181,7 @@ func processComment(r *http.Request, curUser user) {
 		fmt.Printf("curUser username when liking comment: %s\n", curUser.Username)
 		idNumOfLikesStrSlice := strings.Split(idNumOfLikesStr, "-")
 		comID := idNumOfLikesStrSlice[1]
+		fmt.Println("LIKES", idNumOfLikesStr, comID)
 		comIDint, err := strconv.Atoi(comID)
 		if err != nil {
 			log.Fatal(err)
@@ -248,12 +251,20 @@ func processComment(r *http.Request, curUser user) {
 			log.Fatal(err)
 		}
 		fmt.Printf("comment: %s under %s\n", comCon, poId)
-		stmt, err := db.Prepare("INSERT INTO comments (author, postID, content, commentTime, likes, dislikes) VALUES (?,?,?,?,?,?);")
+		po := displayPostsAndComments()
+		var title string
+		for i := 0; i < len(po); i++ {
+			if po[i].PostID == posID {
+				title = po[i].Title
+			}
+		}
+		link := "postpage?postdetails=" + poId + "&postdetails=" + title
+		stmt, err := db.Prepare("INSERT INTO comments (author, postID, content, commentTime, likes, dislikes, URL) VALUES (?,?,?,?,?,?,?);")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		stmt.Exec(curUser.Username, poId, comCon, time.Now(), 0, 0)
+		stmt.Exec(curUser.Username, poId, comCon, time.Now(), 0, 0, link)
 		url, author := findAuthor(posID)
 		randomID := RandStringRunes(10)
 		author.Notifymsg = author.Notifymsg + curUser.Username + " commented your post" + url + randomID + "#"

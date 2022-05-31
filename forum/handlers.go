@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type mainPageData struct {
@@ -75,7 +76,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 				curUser.DislikedComments2 = users[i].DislikedComments2
 				curUser.LikedComments2 = users[i].LikedComments2
 				curUser.Notifymsg = users[i].Notifymsg
-				curUser.Notifyview= users[i].Notifyview
+				curUser.Notifyview = users[i].Notifyview
 				var something []string
 				curUser, something = UpdateNotif(curUser)
 				fmt.Println(something)
@@ -264,6 +265,7 @@ func PostPageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		tpl, err := template.ParseFiles("./templates/header.gohtml", "./templates/footer.gohtml", "./templates/header2.gohtml", "./templates/post.gohtml", "./templates/post2.gohtml")
 		if err != nil {
+			fmt.Println(err)
 			http.Error(w, "Parsing Error", http.StatusInternalServerError)
 			return
 		}
@@ -373,9 +375,56 @@ func PostPageHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else if r.Method == "POST" {
+		removeValue := r.FormValue("removePost")
+		editID := r.FormValue("editButton")
+		fmt.Println(removeValue)
+		if removeValue != "" {
+			removeInt, err := strconv.Atoi(removeValue)
+			if err != nil {
+				log.Fatal(err)
+			}
+			pos := FindPostByPostId(removeInt)
+			if pos.Author == curUser.Username {
+				DeleteOnePost(removeInt)
+				http.Redirect(w, r, "/", http.StatusSeeOther)
+			} else {
+				http.Error(w, "You are not authorized", 400)
+			}
+
+		}
+		if editID != "" {
+
+			var newPost post
+			posID, err := strconv.Atoi(editID)
+			if err != nil {
+				log.Fatal(err)
+			}
+			pos := FindPostByPostId(posID)
+
+			postCon := r.FormValue("postContentE")
+			postTitle := r.FormValue("postTitleE")
+			newPost = pos
+			if postCon != "" {
+				newPost.Content = postCon
+			}
+			if postTitle != "" {
+				newPost.Title = postTitle
+			}
+			newUrl := "localhost:8080/postpage?postdetails=" + editID + "&postdetails=" + newPost.Title
+			newPost.PostTime = time.Now()
+			newPost.URL = newUrl
+			if pos.Author == curUser.Username {
+				EditPost(newPost)
+				http.Redirect(w, r, "/", http.StatusSeeOther)
+			} else {
+				http.Error(w, "You are not authorized", 400)
+			}
+
+		}
 		processPost(r, curUser)
 		processComment(r, curUser)
 		http.Redirect(w, r, urlPost, http.StatusSeeOther)
+
 	} else {
 		http.Error(w, "Bad request", http.StatusBadRequest)
 	}
@@ -476,13 +525,27 @@ func NotiPageHandler(w http.ResponseWriter, r *http.Request) {
 // 	tpl.ExecuteTemplate(w, "notFound.gohtml", nil)
 // }
 func ActivityPageHandler(w http.ResponseWriter, r *http.Request) {
+	var act Activity
 	CurUser := obtainCurUserFormCookie(r)
 	users := AllForumUsers()
 	for i := 0; i < len(users); i++ {
 		if users[i].Username == CurUser.Username {
-			CurUser= users[i]	
+			CurUser = users[i]
 		}
 	}
+	// act = FillActivity(CurUser)
+	LikedInt := CountLikesByUser(CurUser, "l")
+	DlikedInt := CountLikesByUser(CurUser, "d")
+	ComLikedInt := CommentCountLikesByUser(CurUser, "l")
+	fmt.Println(ComLikedInt, "ComLikedInt")
+	ComDlikedInt := CommentCountLikesByUser(CurUser, "d")
+	act.Username = CurUser.Username
+	act = ActFindingPostAndCom(LikedInt, act, "Post", "Liked")
+	act = ActFindingPostAndCom(DlikedInt, act, "Post", "Disliked")
+	act = ActFindingPostAndCom(ComLikedInt, act, "Com", "Liked")
+	act = ActFindingPostAndCom(ComDlikedInt, act, "Com", "Disliked")
+	act = CreatedPostandCom(act)
+	fmt.Println(act.LikedCom)
 	if r.Method == "GET" {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
@@ -492,9 +555,7 @@ func ActivityPageHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Parsing Error", http.StatusInternalServerError)
 			return
 		}
-
-		// fmt.Println("---------", forumUser)
-		err = tpl.ExecuteTemplate(w, "activity.gohtml", CurUser)
+		err = tpl.ExecuteTemplate(w, "activity.gohtml", act)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, "Executing Error", http.StatusInternalServerError)
@@ -502,5 +563,15 @@ func ActivityPageHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		http.Error(w, "Bad request", http.StatusBadRequest)
+	}
+}
+
+func EditorRemovePageHandler(w http.ResponseWriter, r *http.Request) {
+	CurUser := obtainCurUserFormCookie(r)
+	users := AllForumUsers()
+	for i := 0; i < len(users); i++ {
+		if users[i].Username == CurUser.Username {
+			CurUser = users[i]
+		}
 	}
 }

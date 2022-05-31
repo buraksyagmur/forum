@@ -16,6 +16,7 @@ type comment struct {
 	Dislikes       int
 	LikedByCur     bool
 	DislikedByCur  bool
+	URL            string
 }
 
 type post struct {
@@ -34,6 +35,7 @@ type post struct {
 	View          int
 	LikedByCur    bool
 	DislikedByCur bool
+	URL           string
 }
 
 type user struct {
@@ -56,13 +58,18 @@ type user struct {
 }
 
 type Activity struct {
-	Likes     string
-	Dislikes  string
-	PostID    string
-	CommentID string
-	LikesCom  string
-	DlikesCom string
-	Notifymsg string
-	Post      []post
-	Com       []comment
+	Username   string
+	Likes      string
+	Dislikes   string
+	PostID     string
+	CommentID  string
+	LikesCom   string
+	DlikesCom  string
+	Notifymsg  string
+	Post       []post
+	Com        []comment
+	LikedPost  []post
+	DlikedPost []post
+	LikedCom   []comment
+	DlikedCom  []comment
 }

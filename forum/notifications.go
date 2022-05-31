@@ -1,7 +1,6 @@
 package forum
 
 import (
-	"fmt"
 	"html/template"
 	"math/rand"
 	"strconv"
@@ -115,10 +114,7 @@ func UpdateNotif(curUser user) (user, []string) {
 	}
 	NewMsg = remove(msgSlc, SeenCodes)
 	NewMsg = NewMsg[:len(NewMsg)-1]
-	fmt.Println("NEWMESSAGE", NewMsg, len(NewMsg))
-	for i := 0; i < len(NewMsg); i++ {
-		fmt.Println(NewMsg[i], i)
-	}
+
 	for i := 0; i < len(NewMsg); i += 3 {
 		NotifMessageShow = append(NotifMessageShow, NewMsg[i])
 	}
@@ -128,7 +124,7 @@ func UpdateNotif(curUser user) (user, []string) {
 	for i := 2; i < len(NewMsg); i += 3 {
 		NewCodes = append(NewCodes, NewMsg[i])
 	}
-	fmt.Println("NOTIFMESSAGE", NotifMessageShow, NotifMessageLink)
+
 	curUser.NotifMessageShow = SafeUrl(NotifMessageShow, NotifMessageLink)
 	return curUser, NewCodes
 }
@@ -143,18 +139,17 @@ func remove(slice []string, s []int) []string {
 }
 
 func SafeUrl(msg, link []string) map[string]template.URL {
-	fmt.Println("IMPORTANT", msg, len(msg), link, len(link))
 	ShowMap := make(map[string]template.URL, len(msg)*2)
 	var Slc []template.URL
 	for i := 0; i < len(link); i++ {
 		Slc = append(Slc, template.URL(link[i]))
 	}
-	fmt.Println("SLC", Slc, len(Slc))
+
 	for k := 0; k < len(Slc); k++ {
 		intK := strconv.Itoa(k + 1)
 		ShowMap[intK+"-"+msg[k]] = Slc[k]
 
 	}
-	fmt.Println("AGAINIMPORTTAM", ShowMap)
+
 	return ShowMap
 }
