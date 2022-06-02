@@ -376,7 +376,9 @@ func PostPageHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else if r.Method == "POST" {
 		removeValue := r.FormValue("removePost")
+		removeCom := r.FormValue("removeCom")
 		editID := r.FormValue("editButton")
+		editIDCom := r.FormValue("editButtonCom")
 		fmt.Println(removeValue)
 		if removeValue != "" {
 			removeInt, err := strconv.Atoi(removeValue)
@@ -386,6 +388,20 @@ func PostPageHandler(w http.ResponseWriter, r *http.Request) {
 			pos := FindPostByPostId(removeInt)
 			if pos.Author == curUser.Username {
 				DeleteOnePost(removeInt)
+				http.Redirect(w, r, "/", http.StatusSeeOther)
+			} else {
+				http.Error(w, "You are not authorized", 400)
+			}
+
+		}
+		if removeCom != "" {
+			removeInt, err := strconv.Atoi(removeCom)
+			if err != nil {
+				log.Fatal(err)
+			}
+			com := FindComByComId(removeInt)
+			if com.Author == curUser.Username {
+				DeleteOneCom(removeInt)
 				http.Redirect(w, r, "/", http.StatusSeeOther)
 			} else {
 				http.Error(w, "You are not authorized", 400)
@@ -420,6 +436,29 @@ func PostPageHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "You are not authorized", 400)
 			}
 
+		}
+		if editIDCom != "" {
+			var newCom comment
+			comID, err := strconv.Atoi(editIDCom)
+			if err != nil {
+				log.Fatal(err)
+			}
+			com := FindComByComId(comID)
+
+			comCon := r.FormValue("comContentE")
+
+			newCom = com
+			if comCon != "" {
+				newCom.Content = comCon
+			}
+
+			newCom.CommentTime = time.Now()
+			if com.Author == curUser.Username {
+				EditCom(newCom)
+				http.Redirect(w, r, "/", http.StatusSeeOther)
+			} else {
+				http.Error(w, "You are not authorized", 400)
+			}
 		}
 		processPost(r, curUser)
 		processComment(r, curUser)

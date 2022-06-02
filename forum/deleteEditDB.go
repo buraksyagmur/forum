@@ -77,10 +77,14 @@ func DeleteOnePost(postID int) {
 	}
 	defer stmt.Close()
 	stmt.Exec(postID)
+	co := displayComments(postID)
+	for i := 0; i < len(co); i++ {
+		DeleteOneCom(co[i].CommentID)
+	}
 }
 
 func DeleteOneCom(comID int) {
-	stmt, err := db.Prepare("DELETE FROM posts WHERE commentID=?;")
+	stmt, err := db.Prepare("DELETE FROM comments WHERE commentID=?;")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -89,19 +93,19 @@ func DeleteOneCom(comID int) {
 }
 
 func EditPost(newpos post) {
-	stmt, err := db.Prepare("UPDATE posts SET title = ?, content= ?, category=?,postTime =?, URL=? WHERE postID = ?;")
+	stmt, err := db.Prepare("UPDATE posts SET title = ?, content= ?,postTime =?, URL=? WHERE postID = ?;")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
-	stmt.Exec(newpos.Title, newpos.Content, newpos.Category, newpos.PostTime, newpos.URL, newpos.PostID)
+	stmt.Exec(newpos.Title, newpos.Content, newpos.PostTime, newpos.URL, newpos.PostID)
 }
 
 func EditCom(newCom comment) {
-	stmt, err := db.Prepare("UPDATE posts SET content= ?,postTime =?, URL=? WHERE commentID = ?;")
+	stmt, err := db.Prepare("UPDATE comments SET content= ?,commentTime =? WHERE commentID = ?;")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
-	stmt.Exec(newCom.Content, newCom.CommentTime, newCom.URL, newCom.URL)
+	stmt.Exec(newCom.Content, newCom.CommentTime, newCom.CommentID)
 }

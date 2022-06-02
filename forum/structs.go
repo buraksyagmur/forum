@@ -17,6 +17,7 @@ type comment struct {
 	LikedByCur     bool
 	DislikedByCur  bool
 	URL            string
+	Deleted bool
 }
 
 type post struct {
@@ -36,6 +37,7 @@ type post struct {
 	LikedByCur    bool
 	DislikedByCur bool
 	URL           string
+	Deleted bool
 }
 
 type user struct {

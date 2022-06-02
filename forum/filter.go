@@ -127,3 +127,14 @@ func FindPostByPostId(postId int) post {
 	}
 	return pos
 }
+
+func FindComByComId(comId int) comment {
+	var com comment
+	co := displayComs()
+	for i := 0; i < len(co); i++ {
+		if co[i].CommentID == comId {
+			com = co[i]
+		}
+	}
+	return com
+}

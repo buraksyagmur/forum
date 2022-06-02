@@ -8,7 +8,7 @@ import (
 func displayComments(postID int) []comment {
 	// fmt.Printf("postID: %d\n", postID)
 	var coms []comment
-	rows, err := db.Query("SELECT commentID, author, postID, content, commentTime, likes, dislikes,URL FROM comments WHERE postID = ?;", postID)
+	rows, err := db.Query("SELECT commentID, author, postID, content, commentTime, likes, dislikes,URL,deleted FROM comments WHERE postID = ?;", postID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -16,7 +16,7 @@ func displayComments(postID int) []comment {
 
 	for rows.Next() {
 		var com comment
-		rows.Scan(&(com.CommentID), &(com.Author), &(com.PostID), &(com.Content), &(com.CommentTime), &(com.Likes), &(com.Dislikes), &(com.URL))
+		rows.Scan(&(com.CommentID), &(com.Author), &(com.PostID), &(com.Content), &(com.CommentTime), &(com.Likes), &(com.Dislikes), &(com.URL), &(com.Deleted))
 		com.CommentTimeStr = com.CommentTime.Format("Mon 02-01-2006 15:04:05")
 		// fmt.Printf("CommentID: %d\n", com.CommentID)
 		// fmt.Printf("Comment content: %s\n", com.Content)
@@ -37,7 +37,7 @@ func displayPostsAndComments() []post {
 	defer rows.Close()
 	for rows.Next() {
 		var po post
-		rows.Scan(&(po.PostID), &(po.Author), &(po.Image), &(po.Title), &(po.Content), &(po.Category), &(po.PostTime), &(po.Likes), &(po.Dislikes), &(po.IPs), &(po.URL))
+		rows.Scan(&(po.PostID), &(po.Author), &(po.Image), &(po.Title), &(po.Content), &(po.Category), &(po.PostTime), &(po.Likes), &(po.Dislikes), &(po.IPs), &(po.URL),&(po.Deleted))
 		po.Category = strings.Replace(po.Category, "(", "", -1)
 		po.Category = strings.Replace(po.Category, ")", ", ", -1)
 		po.Category = strings.Trim(po.Category, ", ")
@@ -59,7 +59,7 @@ func displayComs() []comment {
 	defer rows.Close()
 	for rows.Next() {
 		var com comment
-		rows.Scan(&(com.CommentID), &(com.Author), &(com.PostID), &(com.Content), &(com.CommentTime), &(com.Likes), &(com.Dislikes), &(com.URL))
+		rows.Scan(&(com.CommentID), &(com.Author), &(com.PostID), &(com.Content), &(com.CommentTime), &(com.Likes), &(com.Dislikes), &(com.URL), &(com.Deleted))
 		com.CommentTimeStr = com.CommentTime.Format("Mon 02-01-2006 15:04:05")
 		coms = append(coms, com)
 	}

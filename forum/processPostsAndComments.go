@@ -136,12 +136,12 @@ func processPost(r *http.Request, curUser user) {
 		}
 		postID := strconv.Itoa(len(displayPostsAndComments()) + 1)
 		url := "postpage?postdetails=" + postID + "&postdetails=" + postTitle
-		stmt, err := db.Prepare("INSERT INTO posts (author, image, title, content, category, postTime, likes, dislikes, ips,URL) VALUES(?,?,?,?,?,?,?,?,?,?);")
+		stmt, err := db.Prepare("INSERT INTO posts (author, image, title, content, category, postTime, likes, dislikes, ips,URL,deleted) VALUES(?,?,?,?,?,?,?,?,?,?,?);")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		stmt.Exec(curUser.Username, curUser.Image, postTitle, postCon, postCatStr, time.Now(), 0, 0, ip, url)
+		stmt.Exec(curUser.Username, curUser.Image, postTitle, postCon, postCatStr, time.Now(), 0, 0, ip, url,false)
 
 		// test
 		// var pid int
@@ -259,12 +259,12 @@ func processComment(r *http.Request, curUser user) {
 			}
 		}
 		link := "postpage?postdetails=" + poId + "&postdetails=" + title
-		stmt, err := db.Prepare("INSERT INTO comments (author, postID, content, commentTime, likes, dislikes, URL) VALUES (?,?,?,?,?,?,?);")
+		stmt, err := db.Prepare("INSERT INTO comments (author, postID, content, commentTime, likes, dislikes, URL,deleted) VALUES (?,?,?,?,?,?,?,?);")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		stmt.Exec(curUser.Username, poId, comCon, time.Now(), 0, 0, link)
+		stmt.Exec(curUser.Username, poId, comCon, time.Now(), 0, 0, link,false)
 		url, author := findAuthor(posID)
 		randomID := RandStringRunes(10)
 		author.Notifymsg = author.Notifymsg + curUser.Username + " commented your post" + url + randomID + "#"
